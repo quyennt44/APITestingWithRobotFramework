@@ -1,0 +1,1370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot rpa="false" generated="20190805 17:35:15.476" generator="Robot 3.1.2 (Python 2.7.15 on win32)">
+<suite source="D:\eclipse-workspace\RobotFrameworkSellCenterAPITest\TestCase\AddAttributeSet\AddAttributeSet.robot" id="s1" name="AddAttributeSet">
+<kw type="setup" name="Init Result List">
+<kw name="Create Jira Session" library="Utils">
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>alias=Get_Jira_Request</arg>
+<arg>url=${JIRA_URL}</arg>
+<arg>auth=${JIRA_AUTH}</arg>
+<arg>verify=True</arg>
+</arguments>
+<msg timestamp="20190805 17:35:15.756" level="INFO">Creating Session using : alias=Get_Jira_Request, url=https://jira.teko.vn, headers={},                     cookies=None, auth=&lt;requests.auth.HTTPBasicAuth object at 0x00000000044AA4E0&gt;, timeout=None, proxies=None, verify=True,                     debug=0 </msg>
+<status status="PASS" endtime="20190805 17:35:15.756" starttime="20190805 17:35:15.755"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.756" starttime="20190805 17:35:15.755"></status>
+</kw>
+<kw name="Create List" library="BuiltIn">
+<doc>Returns a list containing given items.</doc>
+<assign>
+<var>${TEST_RESULT_LIST}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.757" level="INFO">${TEST_RESULT_LIST} = []</msg>
+<status status="PASS" endtime="20190805 17:35:15.757" starttime="20190805 17:35:15.756"></status>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>${TEST_RESULT_LIST}</arg>
+</arguments>
+<msg timestamp="20190805 17:35:15.757" level="INFO">${TEST_RESULT_LIST} = []</msg>
+<status status="PASS" endtime="20190805 17:35:15.757" starttime="20190805 17:35:15.757"></status>
+</kw>
+<kw name="Get All Test Cases From Folder" library="Utils">
+<arguments>
+<arg>${folder}</arg>
+</arguments>
+<assign>
+<var>${TEST_CASE_LIST}</var>
+</assign>
+<kw name="Set Variable" library="BuiltIn">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>${EMPTY}</arg>
+</arguments>
+<assign>
+<var>${testCaseItemDictionary}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.758" level="INFO">${testCaseItemDictionary} = </msg>
+<status status="PASS" endtime="20190805 17:35:15.758" starttime="20190805 17:35:15.758"></status>
+</kw>
+<kw name="Get Request" library="RequestsLibrary">
+<doc>Send a GET request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>Get_Jira_Request</arg>
+<arg>${URI_SEARCH_TESTCASE}?query=projectKey = "${JIRA_PROJECT_KEY}" AND folder = "${folder}"</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.886" level="INFO">Get Request using : alias=Get_Jira_Request, uri=/rest/atm/1.0/testcase/search?query=projectKey = "SC" AND folder = "/API Test/Add Attribute Set", headers=None json=None</msg>
+<msg timestamp="20190805 17:35:15.886" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:15.886" starttime="20190805 17:35:15.758"></status>
+</kw>
+<kw name="Should Be Equal As Strings" library="BuiltIn">
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<arguments>
+<arg>${response.status_code}</arg>
+<arg>${GET_SUCCESS_CODE}</arg>
+</arguments>
+<msg timestamp="20190805 17:35:15.888" level="INFO">Argument types are:
+&lt;type 'int'&gt;
+&lt;type 'unicode'&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:15.888" starttime="20190805 17:35:15.887"></status>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>${response.json()}</arg>
+</arguments>
+<assign>
+<var>${returnList}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.891" level="INFO">${returnList} = [{u'key': u'SC-T10118', u'majorVersion': 1, u'name': u'TC01_Add A Valid Attribute Set', u'parameters': {u'variables': [], u'entries': []}, u'createdOn': u'2019-08-02T11:17:44.000Z', u'testScript': {u'...</msg>
+<status status="PASS" endtime="20190805 17:35:15.892" starttime="20190805 17:35:15.889"></status>
+</kw>
+<kw name="Get Length" library="BuiltIn">
+<doc>Returns and logs the length of the given item as an integer.</doc>
+<arguments>
+<arg>${returnList}</arg>
+</arguments>
+<assign>
+<var>${itemLength}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.893" level="INFO">Length is 11</msg>
+<msg timestamp="20190805 17:35:15.893" level="INFO">${itemLength} = 11</msg>
+<status status="PASS" endtime="20190805 17:35:15.893" starttime="20190805 17:35:15.892"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<assign>
+<var>${testCaseDict}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.895" level="INFO">${testCaseDict} = {}</msg>
+<status status="PASS" endtime="20190805 17:35:15.895" starttime="20190805 17:35:15.894"></status>
+</kw>
+<kw type="for" name="${item} IN [ @{returnList} ]">
+<kw type="foritem" name="${item} = {u'key': u'SC-T10118', u'majorVersion': 1, u'name': u'TC01_Add A Valid Attribute Set', u'parameters': {u'variables': [], u'entries': []}, u'createdOn': u'2019-08-02T11:17:44.000Z', u'testScript': {u's...">
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>key</arg>
+</arguments>
+<assign>
+<var>${key}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.897" level="INFO">${key} = SC-T10118</msg>
+<status status="PASS" endtime="20190805 17:35:15.897" starttime="20190805 17:35:15.896"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.898" level="INFO">${name} = TC01_Add A Valid Attribute Set</msg>
+<status status="PASS" endtime="20190805 17:35:15.898" starttime="20190805 17:35:15.898"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${testCaseDict}</arg>
+<arg>${name}=${key}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:15.900" starttime="20190805 17:35:15.899"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.900" starttime="20190805 17:35:15.896"></status>
+</kw>
+<kw type="foritem" name="${item} = {u'key': u'SC-T10119', u'majorVersion': 1, u'name': u'TC02_Attribute Set Name = null', u'parameters': {u'variables': [], u'entries': []}, u'createdOn': u'2019-08-02T11:17:45.000Z', u'testScript': {u's...">
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>key</arg>
+</arguments>
+<assign>
+<var>${key}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.902" level="INFO">${key} = SC-T10119</msg>
+<status status="PASS" endtime="20190805 17:35:15.902" starttime="20190805 17:35:15.901"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.903" level="INFO">${name} = TC02_Attribute Set Name = null</msg>
+<status status="PASS" endtime="20190805 17:35:15.903" starttime="20190805 17:35:15.902"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${testCaseDict}</arg>
+<arg>${name}=${key}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:15.904" starttime="20190805 17:35:15.903"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.905" starttime="20190805 17:35:15.900"></status>
+</kw>
+<kw type="foritem" name="${item} = {u'key': u'SC-T10120', u'majorVersion': 1, u'name': u'TC03_Attribute Set Name = empty', u'parameters': {u'variables': [], u'entries': []}, u'createdOn': u'2019-08-02T11:17:45.000Z', u'testScript': {u'...">
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>key</arg>
+</arguments>
+<assign>
+<var>${key}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.906" level="INFO">${key} = SC-T10120</msg>
+<status status="PASS" endtime="20190805 17:35:15.907" starttime="20190805 17:35:15.906"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.908" level="INFO">${name} = TC03_Attribute Set Name = empty</msg>
+<status status="PASS" endtime="20190805 17:35:15.908" starttime="20190805 17:35:15.907"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${testCaseDict}</arg>
+<arg>${name}=${key}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:15.909" starttime="20190805 17:35:15.908"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.909" starttime="20190805 17:35:15.905"></status>
+</kw>
+<kw type="foritem" name="${item} = {u'key': u'SC-T10121', u'majorVersion': 1, u'name': u'TC04_Attribute Set Name Containing Space Only', u'parameters': {u'variables': [], u'entries': []}, u'createdOn': u'2019-08-02T11:17:45.000Z', u'te...">
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>key</arg>
+</arguments>
+<assign>
+<var>${key}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.911" level="INFO">${key} = SC-T10121</msg>
+<status status="PASS" endtime="20190805 17:35:15.911" starttime="20190805 17:35:15.910"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.913" level="INFO">${name} = TC04_Attribute Set Name Containing Space Only</msg>
+<status status="PASS" endtime="20190805 17:35:15.913" starttime="20190805 17:35:15.912"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${testCaseDict}</arg>
+<arg>${name}=${key}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:15.914" starttime="20190805 17:35:15.913"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.914" starttime="20190805 17:35:15.910"></status>
+</kw>
+<kw type="foritem" name="${item} = {u'key': u'SC-T10122', u'majorVersion': 1, u'name': u'TC05_Attribute Set Name Containing Reduntdant Space: Leading, Following, Between', u'parameters': {u'variables': [], u'entries': []}, u'createdOn'...">
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>key</arg>
+</arguments>
+<assign>
+<var>${key}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.916" level="INFO">${key} = SC-T10122</msg>
+<status status="PASS" endtime="20190805 17:35:15.916" starttime="20190805 17:35:15.915"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.917" level="INFO">${name} = TC05_Attribute Set Name Containing Reduntdant Space: Leading, Following, Between</msg>
+<status status="PASS" endtime="20190805 17:35:15.917" starttime="20190805 17:35:15.917"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${testCaseDict}</arg>
+<arg>${name}=${key}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:15.919" starttime="20190805 17:35:15.918"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.919" starttime="20190805 17:35:15.915"></status>
+</kw>
+<kw type="foritem" name="${item} = {u'key': u'SC-T10123', u'majorVersion': 1, u'name': u'TC06_Attribute Set Name 255 Characters', u'parameters': {u'variables': [], u'entries': []}, u'createdOn': u'2019-08-02T11:17:45.000Z', u'testScrip...">
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>key</arg>
+</arguments>
+<assign>
+<var>${key}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.921" level="INFO">${key} = SC-T10123</msg>
+<status status="PASS" endtime="20190805 17:35:15.921" starttime="20190805 17:35:15.920"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.922" level="INFO">${name} = TC06_Attribute Set Name 255 Characters</msg>
+<status status="PASS" endtime="20190805 17:35:15.922" starttime="20190805 17:35:15.921"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${testCaseDict}</arg>
+<arg>${name}=${key}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:15.923" starttime="20190805 17:35:15.922"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.923" starttime="20190805 17:35:15.919"></status>
+</kw>
+<kw type="foritem" name="${item} = {u'key': u'SC-T10124', u'majorVersion': 1, u'name': u'TC07_Attribute Set Name 256 Characters', u'parameters': {u'variables': [], u'entries': []}, u'createdOn': u'2019-08-02T11:17:45.000Z', u'testScrip...">
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>key</arg>
+</arguments>
+<assign>
+<var>${key}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.924" level="INFO">${key} = SC-T10124</msg>
+<status status="PASS" endtime="20190805 17:35:15.924" starttime="20190805 17:35:15.923"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.924" level="INFO">${name} = TC07_Attribute Set Name 256 Characters</msg>
+<status status="PASS" endtime="20190805 17:35:15.924" starttime="20190805 17:35:15.924"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${testCaseDict}</arg>
+<arg>${name}=${key}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:15.925" starttime="20190805 17:35:15.924"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.925" starttime="20190805 17:35:15.923"></status>
+</kw>
+<kw type="foritem" name="${item} = {u'key': u'SC-T10125', u'majorVersion': 1, u'name': u'TC08_Dupicated Attribute Set', u'parameters': {u'variables': [], u'entries': []}, u'createdOn': u'2019-08-02T11:17:45.000Z', u'testScript': {u'ste...">
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>key</arg>
+</arguments>
+<assign>
+<var>${key}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.925" level="INFO">${key} = SC-T10125</msg>
+<status status="PASS" endtime="20190805 17:35:15.926" starttime="20190805 17:35:15.925"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.926" level="INFO">${name} = TC08_Dupicated Attribute Set</msg>
+<status status="PASS" endtime="20190805 17:35:15.926" starttime="20190805 17:35:15.926"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${testCaseDict}</arg>
+<arg>${name}=${key}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:15.927" starttime="20190805 17:35:15.926"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.927" starttime="20190805 17:35:15.925"></status>
+</kw>
+<kw type="foritem" name="${item} = {u'key': u'SC-T10126', u'majorVersion': 1, u'name': u'TC09_Dupicated Attribute Set - Uppercase - Lowercase', u'parameters': {u'variables': [], u'entries': []}, u'createdOn': u'2019-08-02T11:17:45.000Z...">
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>key</arg>
+</arguments>
+<assign>
+<var>${key}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.927" level="INFO">${key} = SC-T10126</msg>
+<status status="PASS" endtime="20190805 17:35:15.927" starttime="20190805 17:35:15.927"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.928" level="INFO">${name} = TC09_Dupicated Attribute Set - Uppercase - Lowercase</msg>
+<status status="PASS" endtime="20190805 17:35:15.928" starttime="20190805 17:35:15.927"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${testCaseDict}</arg>
+<arg>${name}=${key}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:15.928" starttime="20190805 17:35:15.928"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.928" starttime="20190805 17:35:15.927"></status>
+</kw>
+<kw type="foritem" name="${item} = {u'key': u'SC-T10127', u'majorVersion': 1, u'name': u'TC10_Dupicated Attribute Set - Vietnamse With Accent - Without Accent', u'parameters': {u'variables': [], u'entries': []}, u'createdOn': u'2019-08...">
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>key</arg>
+</arguments>
+<assign>
+<var>${key}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.929" level="INFO">${key} = SC-T10127</msg>
+<status status="PASS" endtime="20190805 17:35:15.929" starttime="20190805 17:35:15.929"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.929" level="INFO">${name} = TC10_Dupicated Attribute Set - Vietnamse With Accent - Without Accent</msg>
+<status status="PASS" endtime="20190805 17:35:15.930" starttime="20190805 17:35:15.929"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${testCaseDict}</arg>
+<arg>${name}=${key}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:15.930" starttime="20190805 17:35:15.930"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.930" starttime="20190805 17:35:15.928"></status>
+</kw>
+<kw type="foritem" name="${item} = {u'key': u'SC-T10128', u'majorVersion': 1, u'name': u'TC11_Attribute Set Containing Special Characters', u'parameters': {u'variables': [], u'entries': []}, u'createdOn': u'2019-08-02T11:17:46.000Z', u...">
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>key</arg>
+</arguments>
+<assign>
+<var>${key}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.931" level="INFO">${key} = SC-T10128</msg>
+<status status="PASS" endtime="20190805 17:35:15.931" starttime="20190805 17:35:15.930"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${item}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.931" level="INFO">${name} = TC11_Attribute Set Containing Special Characters</msg>
+<status status="PASS" endtime="20190805 17:35:15.931" starttime="20190805 17:35:15.931"></status>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<doc>Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.</doc>
+<arguments>
+<arg>${testCaseDict}</arg>
+<arg>${name}=${key}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:15.932" starttime="20190805 17:35:15.931"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.932" starttime="20190805 17:35:15.930"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.932" starttime="20190805 17:35:15.895"></status>
+</kw>
+<msg timestamp="20190805 17:35:15.932" level="INFO">${TEST_CASE_LIST} = {u'TC01_Add A Valid Attribute Set': u'SC-T10118', u'TC02_Attribute Set Name = null': u'SC-T10119', u'TC03_Attribute Set Name = empty': u'SC-T10120', u'TC04_Attribute Set Name Containing Space Only': u...</msg>
+<status status="PASS" endtime="20190805 17:35:15.932" starttime="20190805 17:35:15.757"></status>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>${TEST_CASE_LIST}</arg>
+</arguments>
+<msg timestamp="20190805 17:35:15.933" level="INFO">${TEST_CASE_LIST} = {u'TC01_Add A Valid Attribute Set': u'SC-T10118', u'TC02_Attribute Set Name = null': u'SC-T10119', u'TC03_Attribute Set Name = empty': u'SC-T10120', u'TC04_Attribute Set Name Containing Space Only': u...</msg>
+<status status="PASS" endtime="20190805 17:35:15.933" starttime="20190805 17:35:15.932"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:15.933" starttime="20190805 17:35:15.755"></status>
+</kw>
+<test id="s1-t1" name="TC01_Add A Valid Attribute Set">
+<kw name="Generate Random Attribute Name" library="AddAttributeSetKeywords">
+<assign>
+<var>${attributeSetName}</var>
+</assign>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>result_format=%Y%m%d %H%M%S%f</arg>
+</arguments>
+<assign>
+<var>${CurrentDate}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.937" level="INFO">${CurrentDate} = 20190805 173515936000</msg>
+<status status="PASS" endtime="20190805 17:35:15.937" starttime="20190805 17:35:15.936"></status>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>Bộ thuộc tính ${CurrentDate}</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.937" level="INFO">${name} = Bộ thuộc tính 20190805 173515936000</msg>
+<status status="PASS" endtime="20190805 17:35:15.937" starttime="20190805 17:35:15.937"></status>
+</kw>
+<msg timestamp="20190805 17:35:15.937" level="INFO">${attributeSetName} = Bộ thuộc tính 20190805 173515936000</msg>
+<status status="PASS" endtime="20190805 17:35:15.937" starttime="20190805 17:35:15.934"></status>
+</kw>
+<kw name="Send Request" library="AddAttributeSetKeywords">
+<arguments>
+<arg>${attributeSetName}</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>name=${attributeSetName}</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.939" level="INFO">${body} = {u'name': u'B\u1ed9 thu\u1ed9c t\xednh 20190805 173515936000'}</msg>
+<status status="PASS" endtime="20190805 17:35:15.939" starttime="20190805 17:35:15.939"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Content-Type=application/json</arg>
+<arg>Authorization=${APPLICATION_API_TOKEN}</arg>
+</arguments>
+<assign>
+<var>${header}</var>
+</assign>
+<msg timestamp="20190805 17:35:15.940" level="INFO">${header} = {u'Content-Type': u'application/json', u'Authorization': u'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTksInR5cGUiOiJ1c2VyIiwiZW1haWwiOiJxdXllbi5udEB0ZWtvLnZuIiwiaWF0IjoxNTY0Mzk2NjQwLCJleHAiO...</msg>
+<status status="PASS" endtime="20190805 17:35:15.940" starttime="20190805 17:35:15.940"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>ConnectToApplicationURL</arg>
+<arg>${APPLICATION_API_URL}</arg>
+<arg>verify=True</arg>
+</arguments>
+<msg timestamp="20190805 17:35:15.941" level="INFO">Creating Session using : alias=ConnectToApplicationURL, url=https://catalog-dev.phongvu.vn, headers={},                     cookies=None, auth=None, timeout=None, proxies=None, verify=True,                     debug=0 </msg>
+<status status="PASS" endtime="20190805 17:35:15.941" starttime="20190805 17:35:15.940"></status>
+</kw>
+<kw name="Post Request" library="RequestsLibrary">
+<doc>Send a POST request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>ConnectToApplicationURL</arg>
+<arg>${URL_PATH}</arg>
+<arg>data=${body}</arg>
+<arg>headers=${header}</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.239" level="INFO">Post Request using : alias=ConnectToApplicationURL, uri=/attribute_sets, data={"name": "B\u1ed9 thu\u1ed9c t\u00ednh 20190805 173515936000"}, headers={u'Content-Type': u'application/json', u'Authorization': u'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTksInR5cGUiOiJ1c2VyIiwiZW1haWwiOiJxdXllbi5udEB0ZWtvLnZuIiwiaWF0IjoxNTY0Mzk2NjQwLCJleHAiOjE1NjQ0ODMwNDA5OX0.R-YCMBNF1hVKvSi3B7mPkiTypirr--Dkol-PNuv_Y6A'}, files=None, allow_redirects=True </msg>
+<msg timestamp="20190805 17:35:16.240" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:16.240" starttime="20190805 17:35:15.941"></status>
+</kw>
+<msg timestamp="20190805 17:35:16.240" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:16.241" starttime="20190805 17:35:15.938"></status>
+</kw>
+<kw name="Result Should Be Success" library="AddAttributeSetKeywords">
+<arguments>
+<arg>${response}</arg>
+</arguments>
+<kw name="Convert To String" library="BuiltIn">
+<doc>Converts the given item to a Unicode string.</doc>
+<arguments>
+<arg>${requestResponse.status_code}</arg>
+</arguments>
+<assign>
+<var>${responseCode}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.245" level="INFO">${responseCode} = 200</msg>
+<status status="PASS" endtime="20190805 17:35:16.245" starttime="20190805 17:35:16.244"></status>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>${requestResponse.json()}</arg>
+</arguments>
+<assign>
+<var>${dict}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.247" level="INFO">${dict} = {u'status': u'success', u'message': None, u'code': u'bo-thuoc-tinh-20190805-173515936000', u'name': u'B\u1ed9 thu\u1ed9c t\xednh 20190805 173515936000'}</msg>
+<status status="PASS" endtime="20190805 17:35:16.247" starttime="20190805 17:35:16.246"></status>
+</kw>
+<kw name="Dictionary Should Contain Value" library="Collections">
+<doc>Fails if ``value`` is not found from ``dictionary``.</doc>
+<arguments>
+<arg>${dict}</arg>
+<arg>${SUCCESS_STATUS}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:16.248" starttime="20190805 17:35:16.247"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${responseCode}</arg>
+<arg>${SUCCESS_CODE}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:16.250" starttime="20190805 17:35:16.249"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:16.250" starttime="20190805 17:35:16.242"></status>
+</kw>
+<kw type="teardown" name="Get Test Result Of Each Test Case">
+<kw name="Collect Test Result" library="Utils">
+<arguments>
+<arg>${TEST_CASE_LIST}</arg>
+<arg>${TEST_RESULT_LIST}</arg>
+</arguments>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${testCaseList}</arg>
+<arg>${TEST NAME.strip()}</arg>
+</arguments>
+<assign>
+<var>${testCaseKey}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.256" level="INFO">${testCaseKey} = SC-T10118</msg>
+<status status="PASS" endtime="20190805 17:35:16.256" starttime="20190805 17:35:16.255"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>testCaseKey=${testCaseKey}</arg>
+<arg>status=${TEST STATUS.title()}</arg>
+</arguments>
+<assign>
+<var>${testResultDictionary}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.259" level="INFO">${testResultDictionary} = {u'testCaseKey': u'SC-T10118', u'status': 'Pass'}</msg>
+<status status="PASS" endtime="20190805 17:35:16.259" starttime="20190805 17:35:16.257"></status>
+</kw>
+<kw name="Append To List" library="Collections">
+<doc>Adds ``values`` to the end of ``list``.</doc>
+<arguments>
+<arg>${testResultList}</arg>
+<arg>${testResultDictionary}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:16.260" starttime="20190805 17:35:16.259"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:16.260" starttime="20190805 17:35:16.253"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:16.261" starttime="20190805 17:35:16.252"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:16.262" critical="yes" starttime="20190805 17:35:15.933"></status>
+</test>
+<test id="s1-t2" name="TC02_Attribute Set Name = null">
+<kw name="Send Request" library="AddAttributeSetKeywords">
+<arguments>
+<arg>${null}</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>name=${attributeSetName}</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.276" level="INFO">${body} = {u'name': None}</msg>
+<status status="PASS" endtime="20190805 17:35:16.276" starttime="20190805 17:35:16.274"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Content-Type=application/json</arg>
+<arg>Authorization=${APPLICATION_API_TOKEN}</arg>
+</arguments>
+<assign>
+<var>${header}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.278" level="INFO">${header} = {u'Content-Type': u'application/json', u'Authorization': u'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTksInR5cGUiOiJ1c2VyIiwiZW1haWwiOiJxdXllbi5udEB0ZWtvLnZuIiwiaWF0IjoxNTY0Mzk2NjQwLCJleHAiO...</msg>
+<status status="PASS" endtime="20190805 17:35:16.278" starttime="20190805 17:35:16.276"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>ConnectToApplicationURL</arg>
+<arg>${APPLICATION_API_URL}</arg>
+<arg>verify=True</arg>
+</arguments>
+<msg timestamp="20190805 17:35:16.280" level="INFO">Creating Session using : alias=ConnectToApplicationURL, url=https://catalog-dev.phongvu.vn, headers={},                     cookies=None, auth=None, timeout=None, proxies=None, verify=True,                     debug=0 </msg>
+<status status="PASS" endtime="20190805 17:35:16.281" starttime="20190805 17:35:16.279"></status>
+</kw>
+<kw name="Post Request" library="RequestsLibrary">
+<doc>Send a POST request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>ConnectToApplicationURL</arg>
+<arg>${URL_PATH}</arg>
+<arg>data=${body}</arg>
+<arg>headers=${header}</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.587" level="INFO">Post Request using : alias=ConnectToApplicationURL, uri=/attribute_sets, data={"name": null}, headers={u'Content-Type': u'application/json', u'Authorization': u'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTksInR5cGUiOiJ1c2VyIiwiZW1haWwiOiJxdXllbi5udEB0ZWtvLnZuIiwiaWF0IjoxNTY0Mzk2NjQwLCJleHAiOjE1NjQ0ODMwNDA5OX0.R-YCMBNF1hVKvSi3B7mPkiTypirr--Dkol-PNuv_Y6A'}, files=None, allow_redirects=True </msg>
+<msg timestamp="20190805 17:35:16.587" level="INFO">${response} = &lt;Response [400]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:16.587" starttime="20190805 17:35:16.281"></status>
+</kw>
+<msg timestamp="20190805 17:35:16.588" level="INFO">${response} = &lt;Response [400]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:16.588" starttime="20190805 17:35:16.273"></status>
+</kw>
+<kw name="Result Should Be Bad Request" library="AddAttributeSetKeywords">
+<arguments>
+<arg>${response}</arg>
+</arguments>
+<kw name="Convert To String" library="BuiltIn">
+<doc>Converts the given item to a Unicode string.</doc>
+<arguments>
+<arg>${requestResponse.status_code}</arg>
+</arguments>
+<assign>
+<var>${responseCode}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.592" level="INFO">${responseCode} = 400</msg>
+<status status="PASS" endtime="20190805 17:35:16.592" starttime="20190805 17:35:16.591"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${responseCode}</arg>
+<arg>${BAD_REQUEST_CODE}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:16.594" starttime="20190805 17:35:16.593"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:16.594" starttime="20190805 17:35:16.590"></status>
+</kw>
+<kw type="teardown" name="Get Test Result Of Each Test Case">
+<kw name="Collect Test Result" library="Utils">
+<arguments>
+<arg>${TEST_CASE_LIST}</arg>
+<arg>${TEST_RESULT_LIST}</arg>
+</arguments>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${testCaseList}</arg>
+<arg>${TEST NAME.strip()}</arg>
+</arguments>
+<assign>
+<var>${testCaseKey}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.600" level="INFO">${testCaseKey} = SC-T10119</msg>
+<status status="PASS" endtime="20190805 17:35:16.600" starttime="20190805 17:35:16.598"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>testCaseKey=${testCaseKey}</arg>
+<arg>status=${TEST STATUS.title()}</arg>
+</arguments>
+<assign>
+<var>${testResultDictionary}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.603" level="INFO">${testResultDictionary} = {u'testCaseKey': u'SC-T10119', u'status': 'Pass'}</msg>
+<status status="PASS" endtime="20190805 17:35:16.603" starttime="20190805 17:35:16.600"></status>
+</kw>
+<kw name="Append To List" library="Collections">
+<doc>Adds ``values`` to the end of ``list``.</doc>
+<arguments>
+<arg>${testResultList}</arg>
+<arg>${testResultDictionary}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:16.605" starttime="20190805 17:35:16.604"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:16.606" starttime="20190805 17:35:16.597"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:16.606" starttime="20190805 17:35:16.596"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:16.607" critical="yes" starttime="20190805 17:35:16.270"></status>
+</test>
+<test id="s1-t3" name="TC03_Attribute Set Name = empty">
+<kw name="Send Request" library="AddAttributeSetKeywords">
+<arguments>
+<arg>${EMPTY}</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>name=${attributeSetName}</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.616" level="INFO">${body} = {u'name': u''}</msg>
+<status status="PASS" endtime="20190805 17:35:16.617" starttime="20190805 17:35:16.616"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Content-Type=application/json</arg>
+<arg>Authorization=${APPLICATION_API_TOKEN}</arg>
+</arguments>
+<assign>
+<var>${header}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.618" level="INFO">${header} = {u'Content-Type': u'application/json', u'Authorization': u'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTksInR5cGUiOiJ1c2VyIiwiZW1haWwiOiJxdXllbi5udEB0ZWtvLnZuIiwiaWF0IjoxNTY0Mzk2NjQwLCJleHAiO...</msg>
+<status status="PASS" endtime="20190805 17:35:16.618" starttime="20190805 17:35:16.617"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>ConnectToApplicationURL</arg>
+<arg>${APPLICATION_API_URL}</arg>
+<arg>verify=True</arg>
+</arguments>
+<msg timestamp="20190805 17:35:16.618" level="INFO">Creating Session using : alias=ConnectToApplicationURL, url=https://catalog-dev.phongvu.vn, headers={},                     cookies=None, auth=None, timeout=None, proxies=None, verify=True,                     debug=0 </msg>
+<status status="PASS" endtime="20190805 17:35:16.619" starttime="20190805 17:35:16.618"></status>
+</kw>
+<kw name="Post Request" library="RequestsLibrary">
+<doc>Send a POST request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>ConnectToApplicationURL</arg>
+<arg>${URL_PATH}</arg>
+<arg>data=${body}</arg>
+<arg>headers=${header}</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.792" level="INFO">Post Request using : alias=ConnectToApplicationURL, uri=/attribute_sets, data={"name": ""}, headers={u'Content-Type': u'application/json', u'Authorization': u'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTksInR5cGUiOiJ1c2VyIiwiZW1haWwiOiJxdXllbi5udEB0ZWtvLnZuIiwiaWF0IjoxNTY0Mzk2NjQwLCJleHAiOjE1NjQ0ODMwNDA5OX0.R-YCMBNF1hVKvSi3B7mPkiTypirr--Dkol-PNuv_Y6A'}, files=None, allow_redirects=True </msg>
+<msg timestamp="20190805 17:35:16.792" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:16.792" starttime="20190805 17:35:16.619"></status>
+</kw>
+<msg timestamp="20190805 17:35:16.793" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:16.793" starttime="20190805 17:35:16.615"></status>
+</kw>
+<kw name="Result Should Be Bad Request" library="AddAttributeSetKeywords">
+<arguments>
+<arg>${response}</arg>
+</arguments>
+<kw name="Convert To String" library="BuiltIn">
+<doc>Converts the given item to a Unicode string.</doc>
+<arguments>
+<arg>${requestResponse.status_code}</arg>
+</arguments>
+<assign>
+<var>${responseCode}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.798" level="INFO">${responseCode} = 200</msg>
+<status status="PASS" endtime="20190805 17:35:16.798" starttime="20190805 17:35:16.796"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${responseCode}</arg>
+<arg>${BAD_REQUEST_CODE}</arg>
+</arguments>
+<msg timestamp="20190805 17:35:16.800" level="FAIL">200 != 400</msg>
+<status status="FAIL" endtime="20190805 17:35:16.800" starttime="20190805 17:35:16.798"></status>
+</kw>
+<status status="FAIL" endtime="20190805 17:35:16.801" starttime="20190805 17:35:16.795"></status>
+</kw>
+<kw type="teardown" name="Get Test Result Of Each Test Case">
+<kw name="Collect Test Result" library="Utils">
+<arguments>
+<arg>${TEST_CASE_LIST}</arg>
+<arg>${TEST_RESULT_LIST}</arg>
+</arguments>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${testCaseList}</arg>
+<arg>${TEST NAME.strip()}</arg>
+</arguments>
+<assign>
+<var>${testCaseKey}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.806" level="INFO">${testCaseKey} = SC-T10120</msg>
+<status status="PASS" endtime="20190805 17:35:16.806" starttime="20190805 17:35:16.805"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>testCaseKey=${testCaseKey}</arg>
+<arg>status=${TEST STATUS.title()}</arg>
+</arguments>
+<assign>
+<var>${testResultDictionary}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.809" level="INFO">${testResultDictionary} = {u'testCaseKey': u'SC-T10120', u'status': 'Fail'}</msg>
+<status status="PASS" endtime="20190805 17:35:16.809" starttime="20190805 17:35:16.807"></status>
+</kw>
+<kw name="Append To List" library="Collections">
+<doc>Adds ``values`` to the end of ``list``.</doc>
+<arguments>
+<arg>${testResultList}</arg>
+<arg>${testResultDictionary}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:16.811" starttime="20190805 17:35:16.810"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:16.811" starttime="20190805 17:35:16.803"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:16.811" starttime="20190805 17:35:16.802"></status>
+</kw>
+<status status="FAIL" endtime="20190805 17:35:16.813" critical="yes" starttime="20190805 17:35:16.613">200 != 400</status>
+</test>
+<test id="s1-t4" name="TC04_Attribute Set Name Containing Space Only">
+<kw name="Send Request" library="AddAttributeSetKeywords">
+<arguments>
+<arg>${SPACE * 4}</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>name=${attributeSetName}</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.829" level="INFO">${body} = {u'name': '    '}</msg>
+<status status="PASS" endtime="20190805 17:35:16.829" starttime="20190805 17:35:16.827"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Content-Type=application/json</arg>
+<arg>Authorization=${APPLICATION_API_TOKEN}</arg>
+</arguments>
+<assign>
+<var>${header}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.831" level="INFO">${header} = {u'Content-Type': u'application/json', u'Authorization': u'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTksInR5cGUiOiJ1c2VyIiwiZW1haWwiOiJxdXllbi5udEB0ZWtvLnZuIiwiaWF0IjoxNTY0Mzk2NjQwLCJleHAiO...</msg>
+<status status="PASS" endtime="20190805 17:35:16.831" starttime="20190805 17:35:16.829"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>ConnectToApplicationURL</arg>
+<arg>${APPLICATION_API_URL}</arg>
+<arg>verify=True</arg>
+</arguments>
+<msg timestamp="20190805 17:35:16.832" level="INFO">Creating Session using : alias=ConnectToApplicationURL, url=https://catalog-dev.phongvu.vn, headers={},                     cookies=None, auth=None, timeout=None, proxies=None, verify=True,                     debug=0 </msg>
+<status status="PASS" endtime="20190805 17:35:16.833" starttime="20190805 17:35:16.831"></status>
+</kw>
+<kw name="Post Request" library="RequestsLibrary">
+<doc>Send a POST request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>ConnectToApplicationURL</arg>
+<arg>${URL_PATH}</arg>
+<arg>data=${body}</arg>
+<arg>headers=${header}</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.987" level="INFO">Post Request using : alias=ConnectToApplicationURL, uri=/attribute_sets, data={"name": "    "}, headers={u'Content-Type': u'application/json', u'Authorization': u'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTksInR5cGUiOiJ1c2VyIiwiZW1haWwiOiJxdXllbi5udEB0ZWtvLnZuIiwiaWF0IjoxNTY0Mzk2NjQwLCJleHAiOjE1NjQ0ODMwNDA5OX0.R-YCMBNF1hVKvSi3B7mPkiTypirr--Dkol-PNuv_Y6A'}, files=None, allow_redirects=True </msg>
+<msg timestamp="20190805 17:35:16.987" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:16.987" starttime="20190805 17:35:16.834"></status>
+</kw>
+<msg timestamp="20190805 17:35:16.988" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:16.988" starttime="20190805 17:35:16.826"></status>
+</kw>
+<kw name="Result Should Be Error" library="AddAttributeSetKeywords">
+<arguments>
+<arg>${response}</arg>
+</arguments>
+<kw name="Convert To String" library="BuiltIn">
+<doc>Converts the given item to a Unicode string.</doc>
+<arguments>
+<arg>${requestResponse.status_code}</arg>
+</arguments>
+<assign>
+<var>${responseCode}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.993" level="INFO">${responseCode} = 200</msg>
+<status status="PASS" endtime="20190805 17:35:16.993" starttime="20190805 17:35:16.991"></status>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>${requestResponse.json()}</arg>
+</arguments>
+<assign>
+<var>${dict}</var>
+</assign>
+<msg timestamp="20190805 17:35:16.994" level="INFO">${dict} = {u'status': u'error', u'message': u'1', u'code': None, u'name': None}</msg>
+<status status="PASS" endtime="20190805 17:35:16.995" starttime="20190805 17:35:16.993"></status>
+</kw>
+<kw name="Dictionary Should Contain Value" library="Collections">
+<doc>Fails if ``value`` is not found from ``dictionary``.</doc>
+<arguments>
+<arg>${dict}</arg>
+<arg>${ERROR_STATUS}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:16.996" starttime="20190805 17:35:16.995"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${responseCode}</arg>
+<arg>${SUCCESS_CODE}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:16.997" starttime="20190805 17:35:16.996"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:16.998" starttime="20190805 17:35:16.990"></status>
+</kw>
+<kw type="teardown" name="Get Test Result Of Each Test Case">
+<kw name="Collect Test Result" library="Utils">
+<arguments>
+<arg>${TEST_CASE_LIST}</arg>
+<arg>${TEST_RESULT_LIST}</arg>
+</arguments>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${testCaseList}</arg>
+<arg>${TEST NAME.strip()}</arg>
+</arguments>
+<assign>
+<var>${testCaseKey}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.003" level="INFO">${testCaseKey} = SC-T10121</msg>
+<status status="PASS" endtime="20190805 17:35:17.003" starttime="20190805 17:35:17.002"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>testCaseKey=${testCaseKey}</arg>
+<arg>status=${TEST STATUS.title()}</arg>
+</arguments>
+<assign>
+<var>${testResultDictionary}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.006" level="INFO">${testResultDictionary} = {u'testCaseKey': u'SC-T10121', u'status': 'Pass'}</msg>
+<status status="PASS" endtime="20190805 17:35:17.006" starttime="20190805 17:35:17.004"></status>
+</kw>
+<kw name="Append To List" library="Collections">
+<doc>Adds ``values`` to the end of ``list``.</doc>
+<arguments>
+<arg>${testResultList}</arg>
+<arg>${testResultDictionary}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:17.008" starttime="20190805 17:35:17.006"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:17.008" starttime="20190805 17:35:17.000"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:17.008" starttime="20190805 17:35:16.999"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:17.010" critical="yes" starttime="20190805 17:35:16.823"></status>
+</test>
+<test id="s1-t5" name="TC05_Attribute Set Name Containing Reduntdant Space: Leading, Following, Between">
+<kw name="Generate Random Attribute Name" library="AddAttributeSetKeywords">
+<assign>
+<var>${attributeSetName}</var>
+</assign>
+<kw name="Get Current Date" library="DateTime">
+<doc>Returns current local or UTC time with an optional increment.</doc>
+<arguments>
+<arg>result_format=%Y%m%d %H%M%S%f</arg>
+</arguments>
+<assign>
+<var>${CurrentDate}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.022" level="INFO">${CurrentDate} = 20190805 173517022000</msg>
+<status status="PASS" endtime="20190805 17:35:17.023" starttime="20190805 17:35:17.021"></status>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>Bộ thuộc tính ${CurrentDate}</arg>
+</arguments>
+<assign>
+<var>${name}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.024" level="INFO">${name} = Bộ thuộc tính 20190805 173517022000</msg>
+<status status="PASS" endtime="20190805 17:35:17.024" starttime="20190805 17:35:17.023"></status>
+</kw>
+<msg timestamp="20190805 17:35:17.024" level="INFO">${attributeSetName} = Bộ thuộc tính 20190805 173517022000</msg>
+<status status="PASS" endtime="20190805 17:35:17.025" starttime="20190805 17:35:17.020"></status>
+</kw>
+<kw name="Send Request" library="AddAttributeSetKeywords">
+<arguments>
+<arg>${SPACE * 4}${attributeSetName}${SPACE * 4}</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>name=${attributeSetName}</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.030" level="INFO">${body} = {u'name': u'    B\u1ed9 thu\u1ed9c t\xednh 20190805 173517022000    '}</msg>
+<status status="PASS" endtime="20190805 17:35:17.030" starttime="20190805 17:35:17.028"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Content-Type=application/json</arg>
+<arg>Authorization=${APPLICATION_API_TOKEN}</arg>
+</arguments>
+<assign>
+<var>${header}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.032" level="INFO">${header} = {u'Content-Type': u'application/json', u'Authorization': u'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTksInR5cGUiOiJ1c2VyIiwiZW1haWwiOiJxdXllbi5udEB0ZWtvLnZuIiwiaWF0IjoxNTY0Mzk2NjQwLCJleHAiO...</msg>
+<status status="PASS" endtime="20190805 17:35:17.032" starttime="20190805 17:35:17.031"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>ConnectToApplicationURL</arg>
+<arg>${APPLICATION_API_URL}</arg>
+<arg>verify=True</arg>
+</arguments>
+<msg timestamp="20190805 17:35:17.033" level="INFO">Creating Session using : alias=ConnectToApplicationURL, url=https://catalog-dev.phongvu.vn, headers={},                     cookies=None, auth=None, timeout=None, proxies=None, verify=True,                     debug=0 </msg>
+<status status="PASS" endtime="20190805 17:35:17.034" starttime="20190805 17:35:17.033"></status>
+</kw>
+<kw name="Post Request" library="RequestsLibrary">
+<doc>Send a POST request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>ConnectToApplicationURL</arg>
+<arg>${URL_PATH}</arg>
+<arg>data=${body}</arg>
+<arg>headers=${header}</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.280" level="INFO">Post Request using : alias=ConnectToApplicationURL, uri=/attribute_sets, data={"name": "    B\u1ed9 thu\u1ed9c t\u00ednh 20190805 173517022000    "}, headers={u'Content-Type': u'application/json', u'Authorization': u'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTksInR5cGUiOiJ1c2VyIiwiZW1haWwiOiJxdXllbi5udEB0ZWtvLnZuIiwiaWF0IjoxNTY0Mzk2NjQwLCJleHAiOjE1NjQ0ODMwNDA5OX0.R-YCMBNF1hVKvSi3B7mPkiTypirr--Dkol-PNuv_Y6A'}, files=None, allow_redirects=True </msg>
+<msg timestamp="20190805 17:35:17.280" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:17.280" starttime="20190805 17:35:17.034"></status>
+</kw>
+<msg timestamp="20190805 17:35:17.281" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:17.281" starttime="20190805 17:35:17.026"></status>
+</kw>
+<kw name="Result Should Be Success" library="AddAttributeSetKeywords">
+<arguments>
+<arg>${response}</arg>
+</arguments>
+<kw name="Convert To String" library="BuiltIn">
+<doc>Converts the given item to a Unicode string.</doc>
+<arguments>
+<arg>${requestResponse.status_code}</arg>
+</arguments>
+<assign>
+<var>${responseCode}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.286" level="INFO">${responseCode} = 200</msg>
+<status status="PASS" endtime="20190805 17:35:17.286" starttime="20190805 17:35:17.284"></status>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>${requestResponse.json()}</arg>
+</arguments>
+<assign>
+<var>${dict}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.287" level="INFO">${dict} = {u'status': u'success', u'message': None, u'code': u'bo-thuoc-tinh-20190805-173517022000', u'name': u'    B\u1ed9 thu\u1ed9c t\xednh 20190805 173517022000    '}</msg>
+<status status="PASS" endtime="20190805 17:35:17.288" starttime="20190805 17:35:17.286"></status>
+</kw>
+<kw name="Dictionary Should Contain Value" library="Collections">
+<doc>Fails if ``value`` is not found from ``dictionary``.</doc>
+<arguments>
+<arg>${dict}</arg>
+<arg>${SUCCESS_STATUS}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:17.289" starttime="20190805 17:35:17.288"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${responseCode}</arg>
+<arg>${SUCCESS_CODE}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:17.291" starttime="20190805 17:35:17.290"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:17.291" starttime="20190805 17:35:17.283"></status>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>${response.json()}</arg>
+</arguments>
+<assign>
+<var>${dict}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.294" level="INFO">${dict} = {u'status': u'success', u'message': None, u'code': u'bo-thuoc-tinh-20190805-173517022000', u'name': u'    B\u1ed9 thu\u1ed9c t\xednh 20190805 173517022000    '}</msg>
+<status status="PASS" endtime="20190805 17:35:17.294" starttime="20190805 17:35:17.293"></status>
+</kw>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${dict}</arg>
+<arg>name</arg>
+</arguments>
+<assign>
+<var>${responseName}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.296" level="INFO">${responseName} =     Bộ thuộc tính 20190805 173517022000    </msg>
+<status status="PASS" endtime="20190805 17:35:17.297" starttime="20190805 17:35:17.295"></status>
+</kw>
+<kw name="Should Be Equal As Strings" library="BuiltIn">
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<arguments>
+<arg>${attributeSetName}</arg>
+<arg>${responseName}</arg>
+</arguments>
+<msg timestamp="20190805 17:35:17.300" level="FAIL">Bộ thuộc tính 20190805 173517022000 !=     Bộ thuộc tính 20190805 173517022000    </msg>
+<status status="FAIL" endtime="20190805 17:35:17.300" starttime="20190805 17:35:17.298"></status>
+</kw>
+<kw type="teardown" name="Get Test Result Of Each Test Case">
+<kw name="Collect Test Result" library="Utils">
+<arguments>
+<arg>${TEST_CASE_LIST}</arg>
+<arg>${TEST_RESULT_LIST}</arg>
+</arguments>
+<kw name="Get From Dictionary" library="Collections">
+<doc>Returns a value from the given ``dictionary`` based on the given ``key``.</doc>
+<arguments>
+<arg>${testCaseList}</arg>
+<arg>${TEST NAME.strip()}</arg>
+</arguments>
+<assign>
+<var>${testCaseKey}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.305" level="INFO">${testCaseKey} = SC-T10122</msg>
+<status status="PASS" endtime="20190805 17:35:17.305" starttime="20190805 17:35:17.304"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>testCaseKey=${testCaseKey}</arg>
+<arg>status=${TEST STATUS.title()}</arg>
+</arguments>
+<assign>
+<var>${testResultDictionary}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.307" level="INFO">${testResultDictionary} = {u'testCaseKey': u'SC-T10122', u'status': 'Fail'}</msg>
+<status status="PASS" endtime="20190805 17:35:17.307" starttime="20190805 17:35:17.305"></status>
+</kw>
+<kw name="Append To List" library="Collections">
+<doc>Adds ``values`` to the end of ``list``.</doc>
+<arguments>
+<arg>${testResultList}</arg>
+<arg>${testResultDictionary}</arg>
+</arguments>
+<status status="PASS" endtime="20190805 17:35:17.308" starttime="20190805 17:35:17.307"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:17.308" starttime="20190805 17:35:17.303"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:17.308" starttime="20190805 17:35:17.302"></status>
+</kw>
+<status status="FAIL" endtime="20190805 17:35:17.309" critical="yes" starttime="20190805 17:35:17.017">Bộ thuộc tính 20190805 173517022000 !=     Bộ thuộc tính 20190805 173517022000    </status>
+</test>
+<kw type="teardown" name="Update Test Status">
+<kw name="Create Test Run" library="Utils">
+<arguments>
+<arg>${TEST_RUN_NAME}</arg>
+<arg>${ISSUE_KEY}</arg>
+<arg>${TEST_RESULT_LIST}</arg>
+</arguments>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>projectKey=${JIRA_PROJECT_KEY}</arg>
+<arg>name=${cycleName}</arg>
+<arg>issueKey=${issueKey}</arg>
+<arg>items=${testResult}</arg>
+</arguments>
+<assign>
+<var>${body}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.319" level="INFO">${body} = {u'projectKey': u'SC', u'name': u'TEST NAME FROM COMMAND LINE', u'issueKey': u'SC-137', u'items': [{u'status': 'Pass', u'testCaseKey': u'SC-T10118'}, {u'status': 'Pass', u'testCaseKey': u'SC-T10119'},...</msg>
+<status status="PASS" endtime="20190805 17:35:17.319" starttime="20190805 17:35:17.317"></status>
+</kw>
+<kw name="Post Request" library="RequestsLibrary">
+<doc>Send a POST request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>Get_Jira_Request</arg>
+<arg>${URI_CREATE_TESTRUN}</arg>
+<arg>data=${body}</arg>
+<arg>headers=${JIRA_HEADER}</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<msg timestamp="20190805 17:35:17.627" level="INFO">Post Request using : alias=Get_Jira_Request, uri=/rest/atm/1.0/testrun, data={"projectKey": "SC", "name": "TEST NAME FROM COMMAND LINE", "issueKey": "SC-137", "items": [{"testCaseKey": "SC-T10118", "status": "Pass"}, {"testCaseKey": "SC-T10119", "status": "Pass"}, {"testCaseKey": "SC-T10120", "status": "Fail"}, {"testCaseKey": "SC-T10121", "status": "Pass"}, {"testCaseKey": "SC-T10122", "status": "Fail"}]}, headers={u'Content-Type': u'application/json'}, files=None, allow_redirects=True </msg>
+<msg timestamp="20190805 17:35:17.627" level="INFO">${response} = &lt;Response [201]&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:17.627" starttime="20190805 17:35:17.319"></status>
+</kw>
+<kw name="Should Be Equal As Strings" library="BuiltIn">
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<arguments>
+<arg>${response.status_code}</arg>
+<arg>${POST_SUCCESS_CODE}</arg>
+</arguments>
+<msg timestamp="20190805 17:35:17.629" level="INFO">Argument types are:
+&lt;type 'int'&gt;
+&lt;type 'unicode'&gt;</msg>
+<status status="PASS" endtime="20190805 17:35:17.629" starttime="20190805 17:35:17.628"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:17.630" starttime="20190805 17:35:17.317"></status>
+</kw>
+<status status="PASS" endtime="20190805 17:35:17.631" starttime="20190805 17:35:17.317"></status>
+</kw>
+<status status="FAIL" endtime="20190805 17:35:17.631" starttime="20190805 17:35:15.478"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="2" pass="3">Critical Tests</stat>
+<stat fail="2" pass="3">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="2" id="s1" name="AddAttributeSet" pass="3">AddAttributeSet</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
