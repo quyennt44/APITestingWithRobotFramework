@@ -6,13 +6,14 @@ Resource    ../Common/Utils.robot
 Test Setup    Init Test Step List
 Suite Setup    Suite Setup    ${folder}    ${TEST_CASE_FOLDER}
 
+
 *** Variables ***
 ${folder}     /API Test/Add Attribute Set
 
 *** Test Cases ***  
 
 Delete Old Test Case
-    Delete All Test Cases From Folder    ${folder}
+    Check And Delete All Test Cases From Folder    ${folder}
   
 TC01_Add A Valid Attribute Set  
     Add Test Step    Put a valid attribute set name     New attribute set is added successfully   

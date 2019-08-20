@@ -6,6 +6,7 @@
     <referencedLibrary type="PYTHON" name="RequestsLibrary" path="C:/Python27/Lib/site-packages/RequestsLibrary/__init__.py"/>
     <referencedLibrary type="PYTHON" name="SeleniumLibrary" path="C:/Python27/Lib/site-packages/SeleniumLibrary/__init__.py"/>
     <referencedLibrary type="PYTHON" name="JSONLibrary" path="C:/Python27/Lib/site-packages/JSONLibrary/__init__.py"/>
+    <referencedLibrary type="PYTHON" name="DatabaseLibrary" path="C:/Python27/Lib/site-packages/DatabaseLibrary/__init__.py"/>
     <pythonpath/>
     <classpath/>
     <excludedForValidation/>

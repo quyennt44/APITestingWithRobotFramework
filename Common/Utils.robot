@@ -10,11 +10,16 @@ ${GET_SUCCESS_CODE}    200
 ${POST_SUCCESS_CODE}    201
 ${DELETE_SUCCESS_CODE}    204
 
+${NOT_FOUND}    404
+
 ${REQUEST_INVALID_OR_NOT_FOUND_CODE}    400
 
 ${TEST_CASE_FOLDER}    TEST_CASE
 
 ${TEST_STEP_LIST}    ${EMPTY}
+
+${TEST_CASE_KEY}    key
+${TEST_CASE_NAME}    name
 
 
 
@@ -54,24 +59,39 @@ Create Jira Session
     Create Session    alias=Get_Jira_Request    url=${JIRA_URL}    auth=${JIRA_AUTH}    verify=True
 
 
-Get All Test Cases From Folder
+Get All Test Cases From Folder As Dictionary
     [Arguments]        ${folder}
     ${testCaseItemDictionary}=    Set Variable    ${EMPTY}
     ${response}=    Get Request    Get_Jira_Request    ${URI_SEARCH_TESTCASE}?query=projectKey = "${JIRA_PROJECT_KEY}" AND folder = "${folder}"      
     Should Be Equal As Strings    ${response.status_code}    ${GET_SUCCESS_CODE}    
     
     #Process the returned result
-     ${returnList}    Set Variable    ${response.json()}
-     ${itemLength}=    Get Length    ${returnList}
-   
+     ${returnList}    Set Variable    ${response.json()}       
      
     ${testCaseDict}=    Create Dictionary    
      :FOR    ${item}    IN    @{returnList} 
-     \    ${key}=    Get From Dictionary    ${item}    key
-     \    ${name}=    Get From Dictionary    ${item}    name
+     \    ${key}=    Get From Dictionary    ${item}    ${TEST_CASE_KEY}
+     \    ${name}=    Get From Dictionary    ${item}    ${TEST_CASE_NAME}
      \    Set To Dictionary    ${testCaseDict}    ${name}=${key}
     
     [Return]    ${testCaseDict}
+    
+
+Get All Test Cases From Folder As List
+    [Arguments]        ${folder}    ${contentType}
+    ${testCaseItemDictionary}=    Set Variable    ${EMPTY}
+    ${response}=    Get Request    Get_Jira_Request    ${URI_SEARCH_TESTCASE}?query=projectKey = "${JIRA_PROJECT_KEY}" AND folder = "${folder}"      
+    Should Be Equal As Strings    ${response.status_code}    ${GET_SUCCESS_CODE}    
+    
+    #Process the returned result
+     ${returnList}    Set Variable    ${response.json()}     
+        
+    ${testCaseList}=    Create List   
+     :FOR    ${item}    IN    @{returnList} 
+     \    ${addedItem}=    Get From Dictionary    ${item}    ${contentType}
+     \    Append To List    ${testCaseList}    ${addedItem}      
+    
+    [Return]    ${testCaseList}
     
 
 Check If Folder Existed
@@ -86,13 +106,14 @@ Check If Folder Existed
     [Return]    ${existed}
 
     
-Delete All Test Cases From Folder 
+Check And Delete All Test Cases From Folder 
     [Arguments]        ${folder}    
-    ${testCaseKeyList}=     Get All Test Cases From Folder     ${folder}  
-    :FOR    ${testCaseKey}    IN    @{testCaseKeyList}
+    ${testCaseKeyList}=     Get All Test Cases From Folder As List     ${folder}    ${TEST_CASE_KEY}  
+     
+     :FOR    ${testCaseKey}    IN    @{testCaseKeyList}     
     \    ${response}=    Delete Request    Get_Jira_Request    ${URI_DELETE_TESTCASE}/${testCaseKey}     
     \    Should Be Equal As Strings    ${response.status_code}    ${DELETE_SUCCESS_CODE} 
-         
+
 Create Test Run      
     [Arguments]    ${cycleName}    ${issueKey}    ${testResult}  
            
@@ -127,5 +148,6 @@ Create Folder
     Should Be Equal As Strings    ${response.status_code}    ${POST_SUCCESS_CODE}    
 
          
+
      
 
