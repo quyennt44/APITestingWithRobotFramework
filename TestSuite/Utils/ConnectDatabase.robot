@@ -7,12 +7,16 @@ Library           DatabaseLibrary
 
 *** Keywords ***
 
-Connect to the DataBase
-    Connect to Database    ${DatabaseType}    ${DatabaseName}    ${Username}    ${Password}    ${DatabaseHost}    ${Port}
+Connect To The DataBase
+    Connect To Database    ${DatabaseType}    ${DatabaseName}    ${Username}    ${Password}    ${DatabaseHost}    ${Port}
 
-Delete A Record
-    [Arguments]    ${tableName}    ${condition}
-    @{S}  Execute Sql String  Delete from ${tableName} where ${condition};
+Delete A Record From Database By Id
+    [Arguments]    ${tableName}    ${id}
+    Execute Sql String  Delete from ${tableName} where id = ${id};
+    
+Close Database
+    Disconnect From Database
+    
 
 
          

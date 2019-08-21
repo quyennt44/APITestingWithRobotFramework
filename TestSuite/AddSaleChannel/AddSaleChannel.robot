@@ -2,6 +2,7 @@
 Resource    ../../resources.robot
 Resource    ../../Common/Utils.robot
 Resource    ../Utils/APICommonKeywords.robot
+Resource    ../Utils/ConnectDatabase.robot
 
 Library    Collections
 Library    String
@@ -14,15 +15,17 @@ Test Teardown    Init Test Teardown
 
 
 *** Variables ***
-${TEST_CYCLE_RUNNER}=    OFF
+# Assign this variable = ON to create test cycle & add to ticket
+# else it will run test only
+${TEST_CYCLE_RUNNER}=    ON
+
+${TEST_CYCLE_NAME}=    [SC-155: Add Sale Channel] QC Check
+${ISSUE_KEY}=    SC-155
+
 
 ${TEST_RESULT_LIST}=    ${EMPTY}
 ${TEST_SUITE_RESULT_LIST}=    ${EMPTY}
 ${TEST_CASE_LIST}=    ${EMPTY}
-
-
-${TEST_CYCLE_NAME}=    [SC-155: Add Sale Channel] QC Check
-${ISSUE_KEY}=    SC-155
 
 ${CHANNEL_TYPE_NOT_EXIST}=    notExist
 @{CHANNEL_TYPE_LIST}=    agent    online    showroom
@@ -39,17 +42,22 @@ ${CHANNEL_STATUS_NOT_EXIST}=    404
 ${RESPONSE_CHANNEL_NAME}=    name
 ${RESPONSE_CHANNEL_CODE}=    code
 ${RESPONSE_CHANNEL_ID}=    id
+${RESPONSE_CHANNEL_ACTIVE}=    is_active
 ${RESPONSE_CHANNEL_RESULT}=    result
 
 ${MAX_LENGTH}    255
+${COMPARE_STRING}=    0
+${COMPARE_INT}=    1
 
 
 *** Keywords ***
 Init Suite Setup
-    Run Keyword If    "${TEST_CYCLE_RUNNER}" == "${CYCLE_ON}"     Init Result List      
+    Run Keyword If    "${TEST_CYCLE_RUNNER}" == "${CYCLE_ON}"     Init Result List    
+    Connect To The DataBase  
     
 Init Suite Teardown  
-    Run Keyword If    "${TEST_CYCLE_RUNNER}" == "${CYCLE_ON}"    Update Test Status         
+    Run Keyword If    "${TEST_CYCLE_RUNNER}" == "${CYCLE_ON}"    Update Test Status    
+    Close Database     
 
 Init Test Teardown  
     Run Keyword If    "${TEST_CYCLE_RUNNER}" == "${CYCLE_ON}"    Get Test Result Of Each Test Case 
@@ -76,16 +84,28 @@ Send Request
     ${response}=    Send Post Request    ${body}    ${URI_PATH_ADD_SALE_CHANNEL}
     [Return]    ${response}
     
-Result Should Contain Equal String
-    [Arguments]    ${response}    ${key}     ${stringToCompare}    
+Result Should Contain Equal Value
+    [Arguments]    ${response}    ${key}    ${valueToCompate}    ${compareType}         
     ${dict}    Set Variable    ${response.json()}    
     ${responsResultDict}=    Get From Dictionary    ${dict}    ${RESPONSE_CHANNEL_RESULT}
     ${responseValue}=    Get From Dictionary    ${responsResultDict}    ${key}
-        
-    Should Be Equal As Strings    ${stringToCompare}    ${responseValue} 
+    Run Keyword If    ${compareType}== ${COMPARE_STRING}    Should Be Equal As Strings    ${valueToCompate}    ${responseValue}            
+    Run Keyword If    ${compareType}== ${COMPARE_INT}    Should Be Equal As Integers    ${valueToCompate}    ${responseValue} 
+    
+Get Value From Key
+    [Arguments]    ${response}    ${key}            
+    ${dict}    Set Variable    ${response.json()}    
+    ${responsResultDict}=    Get From Dictionary    ${dict}    ${RESPONSE_CHANNEL_RESULT}
+    ${responseValue}=    Get From Dictionary    ${responsResultDict}    ${key}
+    
+    [Return]    ${responseValue}
+    
+Delete A Channel By Id
+    [Arguments]    ${response}     
+    ${id}=    Get Value From Key    ${response}    ${RESPONSE_CHANNEL_ID}
+    Delete A Record From Database By Id    ${TABLE_SALE_CHANNELS}    ${id}
     
     
-
 *** Test Cases ***
 TC01_Add A Valid Sale Channel Name    
     ${channelName}=    Generate Random String With Time    Kênh bán 
@@ -100,8 +120,9 @@ TC01_Add A Valid Sale Channel Name
 
     ${response}=    Send Request    ${channelName}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive} 
     Result Should Be Success    ${response}
-    Result Should Contain Equal String    ${response}    ${RESPONSE_CHANNEL_NAME}    ${channelName}    
-
+    Result Should Contain Equal Value    ${response}    ${RESPONSE_CHANNEL_NAME}    ${channelName}    ${COMPARE_STRING}
+    Delete A Channel By Id    ${response}
+    
 TC02_Sale Channel Name = null
     # ${channelName}=    ${null}
     ${channelCode}=    Generate Random String With Time    CODE
@@ -154,13 +175,9 @@ TC05_Sale Channel Name Containing Reduntdant Space: Leading, Following
     ${isActive}=    Convert To Integer    ${isActive}    
 
     ${response}=    Send Request    ${SPACE * 4}${channelName}${SPACE * 4}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive} 
-    # ${dict}    Set Variable    ${response.json()}    
-    # ${responsResultDict}=    Get From Dictionary    ${dict}    ${RESPONSE_CHANNEL_RESULT}
-    # ${responseName}=    Get From Dictionary    ${responsResultDict}    ${RESPONSE_CHANNEL_NAME}
-    
-    # # Channel Name should be trim()
-    # Should Be Equal As Strings    ${channelName}    ${responseName}
-    Result Should Contain Equal String    ${response}    ${RESPONSE_CHANNEL_NAME}    ${channelName}
+    Result Should Be Success    ${response}
+    Result Should Contain Equal Value    ${response}    ${RESPONSE_CHANNEL_NAME}    ${channelName}    ${COMPARE_STRING}
+    Delete A Channel By Id    ${response}
 
 TC06_Sale Channel Name With Max Length
     ${channelName}=    Generate Random String With Time    Sale Channel 
@@ -182,7 +199,8 @@ TC06_Sale Channel Name With Max Length
     ${response}=    Send Request    ${channelName}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive} 
     
     Result Should Be Success    ${response}
-    Result Should Contain Equal String    ${response}    ${RESPONSE_CHANNEL_NAME}    ${channelName}
+    Result Should Contain Equal Value    ${response}    ${RESPONSE_CHANNEL_NAME}    ${channelName}    ${COMPARE_STRING}
+    Delete A Channel By Id    ${response}
 
 TC07_Sale Channel Name Over Max Length
     ${channelName}=    Generate Random String With Time    Sale Channel 
@@ -217,12 +235,14 @@ TC08_Dupicated Sale Channel Name
     ${isActive}=    Evaluate    random.choice($CHANNEL_STATUS_LIST)    random    
     ${isActive}=    Convert To Integer    ${isActive}    
 
-    ${response}=    Send Request    ${channelName}    ${channelCode1}    ${channelType}    ${sellerId}    ${isActive}
-    Result Should Be Success    ${response}    
+    ${response1}=    Send Request    ${channelName}    ${channelCode1}    ${channelType}    ${sellerId}    ${isActive}
+    Result Should Be Success    ${response1}    
     
     # Send request again
-    ${response}=    Send Request    ${channelName}    ${channelCode2}    ${channelType}    ${sellerId}    ${isActive}    
-    Result Should Be Bad Request    ${response}
+    ${response2}=    Send Request    ${channelName}    ${channelCode2}    ${channelType}    ${sellerId}    ${isActive}    
+    Result Should Be Bad Request    ${response2}
+    
+    Delete A Channel By Id    ${response1}
 
 
 TC09_Dupicated Sale Channel Name - Uppercase - Lowercase
@@ -238,13 +258,15 @@ TC09_Dupicated Sale Channel Name - Uppercase - Lowercase
     ${isActive}=    Convert To Integer    ${isActive}    
 
     ${channelName}=    Convert To Uppercase    ${channelName}
-    ${response}=    Send Request    ${channelName}    ${channelCode1}    ${channelType}    ${sellerId}    ${isActive}
-    Result Should Be Success    ${response}    
+    ${response1}=    Send Request    ${channelName}    ${channelCode1}    ${channelType}    ${sellerId}    ${isActive}
+    Result Should Be Success    ${response1}    
     
     # Send request with lower case
     ${channelName}=    Convert To Lowercase    ${channelName}
-    ${response}=    Send Request    ${channelName}    ${channelCode2}    ${channelType}    ${sellerId}    ${isActive}    
-    Result Should Be Bad Request    ${response}
+    ${response2}=    Send Request    ${channelName}    ${channelCode2}    ${channelType}    ${sellerId}    ${isActive}    
+    Result Should Be Bad Request    ${response2}
+    
+    Delete A Channel By Id    ${response1}
     
 
 TC10_Dupicated Sale Channel Name - Vietnamse With Accent - Without Accent
@@ -263,12 +285,13 @@ TC10_Dupicated Sale Channel Name - Vietnamse With Accent - Without Accent
     ${isActive}=    Evaluate    random.choice($CHANNEL_STATUS_LIST)    random    
     ${isActive}=    Convert To Integer    ${isActive}    
     
-    ${response}=    Send Request    ${channelName1}    ${channelCode1}    ${channelType}    ${sellerId}    ${isActive}
-    Result Should Be Success    ${response}    
+    ${response1}=    Send Request    ${channelName1}    ${channelCode1}    ${channelType}    ${sellerId}    ${isActive}
+    Result Should Be Success    ${response1}    
     
-    ${response}=    Send Request    ${channelName2}    ${channelCode2}    ${channelType}    ${sellerId}    ${isActive}    
-    Result Should Be Bad Request    ${response} 
-
+    ${response2}=    Send Request    ${channelName2}    ${channelCode2}    ${channelType}    ${sellerId}    ${isActive}    
+    Result Should Be Bad Request    ${response2} 
+    
+    Delete A Channel By Id    ${response1}
 
 TC11_Sale Channel Name Containing Special Characters
     ${channelName}=    Generate Random String With Time    ~!!#@###%$#^#^&*()_+    
@@ -284,7 +307,8 @@ TC11_Sale Channel Name Containing Special Characters
     
     ${response}=    Send Request    ${channelName}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}
     Result Should Be Success    ${response}    
-    Result Should Contain Equal String    ${response}    ${RESPONSE_CHANNEL_NAME}    ${channelName}
+    Result Should Contain Equal Value    ${response}    ${RESPONSE_CHANNEL_NAME}    ${channelName}    ${COMPARE_STRING}
+    Delete A Channel By Id    ${response}
     
 TC12_Sale Channel Code = null
     ${channelName}=    Generate Random String With Time    Kênh bán 
@@ -342,11 +366,11 @@ TC15_Sale Channel Code Containing Reduntdant Space: Leading, Following
     ${dict}    Set Variable    ${response.json()}    
     
     ${responsResultDict}=    Get From Dictionary    ${dict}    ${RESPONSE_CHANNEL_RESULT}
-    # ${responseCode}=    Get From Dictionary    ${responsResultDict}    ${RESPONSE_CHANNEL_CODE}
-    # # Channel Code should be trim()
-    # Should Be Equal As Strings    ${channelCode1}    ${responseCode}
+    
     Result Should Be Success    ${response}
-    Result Should Contain Equal String    ${response}    ${RESPONSE_CHANNEL_CODE}    ${channelCode1}
+    Result Should Contain Equal Value    ${response}    ${RESPONSE_CHANNEL_CODE}    ${channelCode1}    ${COMPARE_STRING}
+    Delete A Channel By Id    ${response}
+    
 
 TC16_Sale Channel Code With Max Length
     ${channelName}=    Generate Random String With Time    Kênh bán 
@@ -370,7 +394,8 @@ TC16_Sale Channel Code With Max Length
     ${response}=    Send Request    ${channelName}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive} 
     
     Result Should Be Success    ${response}
-    Result Should Contain Equal String    ${response}    ${RESPONSE_CHANNEL_CODE}    ${channelCode}
+    Result Should Contain Equal Value    ${response}    ${RESPONSE_CHANNEL_CODE}    ${channelCode}    ${COMPARE_STRING}
+    Delete A Channel By Id    ${response}
 
 TC17_Sale Channel Code Over Max Length
     ${channelName}=    Generate Random String With Time    Kênh bán 
@@ -407,12 +432,13 @@ TC18_Dupicated Sale Channel Code
     ${isActive}=    Evaluate    random.choice($CHANNEL_STATUS_LIST)    random    
     ${isActive}=    Convert To Integer    ${isActive}    
 
-    ${response}=    Send Request    ${channelName1}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}
-    Result Should Be Success    ${response}    
+    ${response1}=    Send Request    ${channelName1}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}
+    Result Should Be Success    ${response1}    
     
     # Send request again
-    ${response}=    Send Request    ${channelName2}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}    
-    Result Should Be Bad Request    ${response}
+    ${response2}=    Send Request    ${channelName2}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}    
+    Result Should Be Bad Request    ${response2}
+    Delete A Channel By Id    ${response1}
 
 
 TC19_Dupicated Sale Channel Code - Uppercase - Lowercase
@@ -429,14 +455,15 @@ TC19_Dupicated Sale Channel Code - Uppercase - Lowercase
     ${isActive}=    Convert To Integer    ${isActive}    
 
     ${channelName}=    Convert To Uppercase    ${channelCode}
-    ${response}=    Send Request    ${channelName1}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}
-    Result Should Be Success    ${response}    
+    ${response1}=    Send Request    ${channelName1}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}
+    Result Should Be Success    ${response1}    
     
     # Send request with lower case
     ${channelName}=    Convert To Lowercase    ${channelCode}
-    ${response}=    Send Request    ${channelName2}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}    
-    Result Should Be Bad Request    ${response}
+    ${response2}=    Send Request    ${channelName2}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}    
+    Result Should Be Bad Request    ${response2}
     
+    Delete A Channel By Id    ${response1}
 
 TC20_Dupicated Sale Channel Code - Vietnamse With Accent - Without Accent
     ${tmpString}=    Generate Random String With Time    C
@@ -455,12 +482,13 @@ TC20_Dupicated Sale Channel Code - Vietnamse With Accent - Without Accent
     ${isActive}=    Evaluate    random.choice($CHANNEL_STATUS_LIST)    random    
     ${isActive}=    Convert To Integer    ${isActive}    
     
-    ${response}=    Send Request    ${channelName1}    ${channelCode1}    ${channelType}    ${sellerId}    ${isActive}
-    Result Should Be Success    ${response}    
+    ${response1}=    Send Request    ${channelName1}    ${channelCode1}    ${channelType}    ${sellerId}    ${isActive}
+    Result Should Be Success    ${response1}    
     
-    ${response}=    Send Request    ${channelName2}    ${channelCode2}    ${channelType}    ${sellerId}    ${isActive}    
-    Result Should Be Bad Request    ${response}
-
+    ${response2}=    Send Request    ${channelName2}    ${channelCode2}    ${channelType}    ${sellerId}    ${isActive}    
+    Result Should Be Bad Request    ${response2}
+     
+    Delete A Channel By Id    ${response1}
 
 TC21_Sale Channel Code Containing Special Characters
     ${channelName}=    Generate Random String With Time    Kênh bán
@@ -476,8 +504,8 @@ TC21_Sale Channel Code Containing Special Characters
     
     ${response}=    Send Request    ${channelName}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}
     Result Should Be Success    ${response}  
-    Result Should Contain Equal String    ${response}    ${RESPONSE_CHANNEL_CODE}    ${channelCode}  
-
+    Result Should Contain Equal Value    ${response}    ${RESPONSE_CHANNEL_CODE}    ${channelCode}    ${COMPARE_STRING}
+    Delete A Channel By Id    ${response}
 
 TC22_Sale Channel Type = null
     ${channelName}=    Generate Random String With Time    Kênh bán
@@ -680,6 +708,8 @@ TC34_Sale Channel Status Is Active
     
     ${response}=    Send Request    ${channelName}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}
     Result Should Be Success    ${response}  
+    Result Should Contain Equal Value    ${response}    ${RESPONSE_CHANNEL_ACTIVE}    ${isActive}    ${COMPARE_INT}
+    Delete A Channel By Id    ${response}
 
 TC35_Sale Channel Status Is Inactive
     ${channelName}=    Generate Random String With Time    Kênh bán
@@ -693,6 +723,8 @@ TC35_Sale Channel Status Is Inactive
     
     ${response}=    Send Request    ${channelName}    ${channelCode}    ${channelType}    ${sellerId}    ${isActive}
     Result Should Be Success    ${response}  
+    Result Should Contain Equal Value    ${response}    ${RESPONSE_CHANNEL_ACTIVE}    ${isActive}    ${COMPARE_INT}
+    Delete A Channel By Id    ${response}
 
 TC36_Sale Channel Status Not Exist
     ${channelName}=    Generate Random String With Time    Kênh bán

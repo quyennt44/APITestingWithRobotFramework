@@ -14,8 +14,9 @@ Test Teardown    Init Test Teardown
 
 
 *** Variables ***
+# Assign this variable = ON to create test cycle & add to ticket
+# else it will run test only
 ${TEST_CYCLE_RUNNER}=    ON
-
 
 ${TEST_CYCLE_NAME}=    [SC-158: Update Sale Channel] QC Check
 ${ISSUE_KEY}=    SC-158

@@ -39,11 +39,18 @@ ${JIRA_PASSWORD}    teko@123
 
 ${CYCLE_ON}=    ON
 
+
 ${JIRA_PROJECT_KEY}    SC
 
-${FOLDER_ADD_SALE_CHANNEL}    /API Test/Add Sale Chanel Demo
+${FOLDER_ADD_SALE_CHANNEL}    /API Test/Add Sale Chanel
 ${FOLDER_UPDATE_SALE_CHANNEL}    /API Test/Update Sale Chanel
 ${FOLDER_ADD_ATTRIBUTE_SET}    /API Test/Add Attribute Set
+
+${FOLDER_ADD_PRODUCT}    /API Test/Product/Add Product
+
+# ///////////////////////////////////////////////////////
+# Table List
+${TABLE_SALE_CHANNELS}=    sale_channels
 
 
 

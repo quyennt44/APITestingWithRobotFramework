@@ -22,7 +22,6 @@ ${TEST_CASE_KEY}    key
 ${TEST_CASE_NAME}    name
 
 
-
 *** Keywords ***
 Suite Setup
     [Arguments]    ${folderPath}    ${folderType}
@@ -39,21 +38,42 @@ Add Test Step
     ${step}=    Create Dictionary    description=${stepDescription}        expectedResult=${stepExpect}
     Append To List    ${TEST_STEP_LIST}     ${step} 
 
-Complete Test Case And Add To Folder
-    [Arguments]    ${folder}
-    Create Test Case    ${TEST_STEP_LIST}    ${folder}        ${TEST_NAME}  
+Complete Test Case
+    [Arguments]    ${folder}    ${issueLinks}
+    Run Keyword If    "${issueLinks}"!="${null}"    Add Test Case To Folder And Ticket    ${folder}    ${issueLinks}
+    ...                  ELSE                            Add Test Case To Folder    ${folder}        
+       
+
+Add Test Case To Folder And Ticket
+    [Arguments]    ${folder}    ${issueLinks}
+    Create Test Case With Ticket    ${TEST_STEP_LIST}    ${folder}        ${TEST_NAME}    ${issueLinks}  
+
+Add Test Case To Folder
+    [Arguments]    ${folder} 
+    Create Test Case    ${TEST_STEP_LIST}    ${folder}        ${TEST_NAME}
 
 
-Create Test Case
-    [Arguments]    ${testSteps}    ${folder}    ${testcaseName}      
-    ${testScript}=    Create Dictionary    type=STEP_BY_STEP    steps=${testSteps}    
-
-    ${body}=    Create Dictionary    projectKey=${JIRA_PROJECT_KEY}     folder=${folder}    status=Approved      name=${testcaseName}    testScript=${testScript}    
+Create Test Case With Ticket
+    [Arguments]    ${testSteps}    ${folder}    ${testcaseName}    ${issueKeys}      
+    ${testScript}=    Create Dictionary    type=STEP_BY_STEP    steps=${testSteps} 
+    
+    ${issueLinks}=     Create List    ${issueKeys} 
+    
+    ${body}=    Create Dictionary    projectKey=${JIRA_PROJECT_KEY}     folder=${folder}    status=Approved      name=${testcaseName}    testScript=${testScript}    issueLinks=${issueLinks}    
     # Create Session    alias=Get_Jira_Request    url=${JIRA_URL}    auth=${JIRA_AUTH}    verify=True 
     ${response}=    Post Request    Get_Jira_Request    ${URI_CREATE_TESTCASE}       data=${body}    headers=${JIRA_HEADER}   
     
     Should Be Equal As Strings    ${response.status_code}    ${POST_SUCCESS_CODE}    
     
+Create Test Case
+    [Arguments]    ${testSteps}    ${folder}    ${testcaseName}     
+    ${testScript}=    Create Dictionary    type=STEP_BY_STEP    steps=${testSteps} 
+        
+    ${body}=    Create Dictionary    projectKey=${JIRA_PROJECT_KEY}     folder=${folder}    status=Approved      name=${testcaseName}    testScript=${testScript}  
+    # Create Session    alias=Get_Jira_Request    url=${JIRA_URL}    auth=${JIRA_AUTH}    verify=True 
+    ${response}=    Post Request    Get_Jira_Request    ${URI_CREATE_TESTCASE}       data=${body}    headers=${JIRA_HEADER}   
+    
+    Should Be Equal As Strings    ${response.status_code}    ${POST_SUCCESS_CODE}    
 
 Create Jira Session
     Create Session    alias=Get_Jira_Request    url=${JIRA_URL}    auth=${JIRA_AUTH}    verify=True

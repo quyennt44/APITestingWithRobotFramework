@@ -28,7 +28,7 @@
 		<link>
 			<name>libspecs/DatabaseLibrary.py</name>
 			<type>1</type>
-			<location>C:/Python27/Lib/site-packages/DatabaseLibrary/__init__.py</location>
+			<location>C:/Python27/lib/site-packages/DatabaseLibrary/connection_manager.py</location>
 		</link>
 		<link>
 			<name>libspecs/RequestsLibrary.py</name>
