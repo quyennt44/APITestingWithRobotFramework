@@ -5,11 +5,11 @@
 *** Variables ***
 #Database
 ${Port}           3306
-${Username}       cuong-dev
-${DatabaseHost}    14.225.2.95
-${Password}       secret
-${DatabaseName}    catalog_dev
-${DatabaseType}    pymysql
+${Username}       
+${DatabaseHost}    
+${Password}       
+${DatabaseName}    
+${DatabaseType}    
 
 
 
@@ -30,9 +30,9 @@ ${URI_CREATE_TESTRUN}    /rest/atm/1.0/testrun
 ${URI_CREATE_TESTFOLDER}    /rest/atm/1.0/folder
 
 
-${JIRA_URL}    https://jira.teko.vn
-${JIRA_USER}    quyen.nt
-${JIRA_PASSWORD}    teko@123
+${JIRA_URL}    
+${JIRA_USER}   
+${JIRA_PASSWORD}    
 
 @{JIRA_AUTH}    ${JIRA_USER}    ${JIRA_PASSWORD}
 &{JIRA_HEADER}       Content-Type=application/json
